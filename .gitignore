@@ -1,0 +1,49 @@
+# Raw customer data — must NOT be committed (Policy §10)
+data/
+*.csv
+!predictions.csv
+!reports/*.csv
+
+# Implementation plan documents (per user constraint: do not push implementation plan md)
+*implementation*plan*.md
+*Implementation*Plan*.md
+*plan*.md
+!README.md
+!reports/*.md
+!MEMO.md
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+.env
+
+# Models (large binary — ship separately or use Git LFS)
+# model.joblib is small enough to commit, so we do NOT ignore it
+# models/*.joblib  ← intentionally not ignored
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Reports intermediate files
+reports/*.png
+reports/*.svg

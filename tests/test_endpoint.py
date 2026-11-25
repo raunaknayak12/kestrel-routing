@@ -78,9 +78,9 @@ def test_policy_section_3_payment_trap():
 
 
 def test_vague_call_me_triage():
-    """Verify vague short queries are flagged or evaluated honestly."""
+    """Verify vague short queries are flagged with needs_triage=True."""
     payload = {
-        "request_text": "call me",
+        "request_text": "please call me about my purifier",
         "product_family": "Water Purifier",
         "channel": "ivr",
         "warranty_status": "in_warranty"
@@ -90,6 +90,9 @@ def test_vague_call_me_triage():
     data = response.json()
     assert data["predicted_team"] in VALID_TEAMS
     assert len(data["top3"]) == 3
+    assert data["needs_triage"] is True
+    assert data["confidence"] < 0.45
+    assert any("triage" in r.lower() for r in data["reasons"])
 
 
 def test_consumables_order():

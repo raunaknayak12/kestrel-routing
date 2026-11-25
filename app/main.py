@@ -13,11 +13,11 @@ import re
 import joblib
 import pandas as pd
 import numpy as np
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Literal
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 # Ensure src is on python path
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -63,12 +63,33 @@ def health_check():
     }
 
 
+ChannelType = Literal["ivr", "chat", "whatsapp", "email"]
+ProductFamilyType = Literal[
+    "Water Purifier", "Chimney", "Air Fryer", "Induction Cooktop",
+    "Robot Vacuum", "Ceiling Fan", "Microwave Oven"
+]
+WarrantyStatusType = Literal["in_warranty", "shield", "out_of_warranty"]
+SourceType = Literal["crm", "legacy_zoho"]
+
+
 class ServiceRequest(BaseModel):
-    request_text: str = Field(..., description="Customer opening message or IVR transcript")
-    channel: str = Field(default="chat", description="Channel: ivr, chat, whatsapp, or email")
-    product_family: str = Field(default="Water Purifier", description="Product line")
-    warranty_status: str = Field(default="in_warranty", description="in_warranty, shield, or out_of_warranty")
-    source: Optional[str] = Field(default="crm", description="Source system: crm or legacy_zoho")
+    request_text: str = Field(
+        ...,
+        min_length=3,
+        max_length=5000,
+        description="Customer opening message or IVR transcript (3 to 5000 chars)"
+    )
+    channel: ChannelType = Field(default="chat", description="Channel: ivr, chat, whatsapp, or email")
+    product_family: ProductFamilyType = Field(default="Water Purifier", description="Product line")
+    warranty_status: WarrantyStatusType = Field(default="in_warranty", description="in_warranty, shield, or out_of_warranty")
+    source: Optional[SourceType] = Field(default="crm", description="Source system: crm or legacy_zoho")
+
+    @field_validator("request_text")
+    @classmethod
+    def validate_non_whitespace(cls, v: str) -> str:
+        if not v or len(v.strip()) < 3:
+            raise ValueError("request_text must contain at least 3 non-whitespace characters")
+        return v
 
 
 class AlternativePrediction(BaseModel):

@@ -104,3 +104,64 @@ def test_consumables_order():
     assert response.status_code == 200
     data = response.json()
     assert data["predicted_team"] == "Filters & Consumables"
+
+
+def test_route_empty_request_text_fails():
+    """Reject empty or whitespace-only requests with 422."""
+    payload = {
+        "request_text": "  ",
+        "product_family": "Water Purifier",
+        "channel": "chat",
+        "warranty_status": "in_warranty"
+    }
+    response = client.post("/route", json=payload)
+    assert response.status_code == 422
+
+
+def test_route_oversize_request_text_fails():
+    """Reject requests exceeding max length of 5000 characters with 422."""
+    payload = {
+        "request_text": "purifier fault " * 400,  # ~6000 chars
+        "product_family": "Water Purifier",
+        "channel": "chat",
+        "warranty_status": "in_warranty"
+    }
+    response = client.post("/route", json=payload)
+    assert response.status_code == 422
+
+
+def test_route_invalid_channel_fails():
+    """Reject invalid channel values with 422."""
+    payload = {
+        "request_text": "my purifier has broken down",
+        "product_family": "Water Purifier",
+        "channel": "carrier_pigeon",
+        "warranty_status": "in_warranty"
+    }
+    response = client.post("/route", json=payload)
+    assert response.status_code == 422
+
+
+def test_route_invalid_product_family_fails():
+    """Reject unknown product families with 422."""
+    payload = {
+        "request_text": "my appliance has broken down",
+        "product_family": "Spaceship",
+        "channel": "chat",
+        "warranty_status": "in_warranty"
+    }
+    response = client.post("/route", json=payload)
+    assert response.status_code == 422
+
+
+def test_route_invalid_warranty_status_fails():
+    """Reject invalid warranty status with 422."""
+    payload = {
+        "request_text": "my appliance has broken down",
+        "product_family": "Water Purifier",
+        "channel": "chat",
+        "warranty_status": "lifetime_unlimited"
+    }
+    response = client.post("/route", json=payload)
+    assert response.status_code == 422
+

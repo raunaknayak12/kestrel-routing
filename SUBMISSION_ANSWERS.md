@@ -99,5 +99,7 @@ Every currently open issue identified during audit is listed below:
 
 ---
 
-### Question 12: Repository Link Placeholder
-- **Repository URL:** [FILL IN]
+### Question 12: Repository Link
+- **Repository URL:** https://github.com/raunaknayak12/kestrel-routing
+
+> Public repository · 21 commits · No raw customer data · No implementation plan document.

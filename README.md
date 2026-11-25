@@ -49,6 +49,17 @@ Interactive OpenAPI / Swagger docs are available at `http://127.0.0.1:8000/docs`
 
 ---
 
+## Model Provenance & Security Note
+
+> [!CAUTION]
+> **Pickle Security Notice:** `model.joblib` is a serialized Python pickle artifact. Standard Python pickle loading can execute arbitrary bytecode if loaded from untrusted sources. Only run and load `model.joblib` distributed directly within this approved internal repository.
+> 
+> To safeguard against tampering, `app/main.py` performs an automatic SHA-256 cryptographic checksum validation before loading:
+> - **Expected SHA-256:** `6876486345d568e31ffb8c10d3decd0690d3b5bf68455db084ef4f298cdf33e4`
+> - The application verifies this checksum at startup and rejects modified or corrupted files.
+
+---
+
 ## Repository Structure
 
 ```

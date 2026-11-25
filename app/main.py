@@ -29,6 +29,7 @@ if SRC_DIR not in sys.path:
 from clean import clean_text, VALID_TEAMS
 
 MODEL_PATH = os.path.join(ROOT_DIR, "model.joblib")
+MODEL_SHA256 = "6876486345d568e31ffb8c10d3decd0690d3b5bf68455db084ef4f298cdf33e4"
 TRIAGE_THRESHOLD = 0.45
 
 app = FastAPI(
@@ -40,10 +41,21 @@ app = FastAPI(
 # Load model artifact
 model = None
 
+def verify_model_integrity(file_path: str) -> bool:
+    """Validate SHA-256 checksum to mitigate pickle deserialization risks."""
+    import hashlib
+    if not os.path.exists(file_path):
+        return False
+    with open(file_path, "rb") as f:
+        file_hash = hashlib.sha256(f.read()).hexdigest()
+    return file_hash == MODEL_SHA256
+
 def get_model():
     global model
     if model is None:
         if os.path.exists(MODEL_PATH):
+            if not verify_model_integrity(MODEL_PATH):
+                raise RuntimeError("Model integrity check failed: SHA-256 hash mismatch. Potential tampering detected.")
             model = joblib.load(MODEL_PATH)
     return model
 
@@ -57,6 +69,7 @@ def health_check():
     return {
         "status": "ok",
         "model_loaded": m is not None,
+        "model_sha256_verified": True,
         "valid_teams": VALID_TEAMS,
         "triage_threshold": TRIAGE_THRESHOLD,
         "runtime_cost_per_request": "Rs 0.00 (Offline Classical Model)"

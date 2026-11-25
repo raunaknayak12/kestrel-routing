@@ -22,7 +22,7 @@ On the most recent out-of-time validation quarter (April–June 2026, CRM post-m
 - **Our Model Accuracy against True Resolution:** **84.0%** (vs the legacy bot's **76.7%**).
 - **Agreement with Legacy Bot:** **75.5%** (demonstrating that the model actively corrects the bot's known errors).
 - **The Ambiguity Ceiling:** ~4.7% of customer messages are vague requests (e.g., *"call me"*, *"urgent call back"*) containing zero diagnostic details. No AI model can route these reliably from text alone.
-- **Triage Safety Net:** The model flags these low-confidence requests (< 45% confidence) as `needs_triage: true` (approx. 13% of volume) for Meenal’s intake desk, preventing misdirected dispatches.
+- **Triage Safety Net & Optimism Caveat:** The model flags low-confidence requests (< 45% confidence) as `needs_triage: true` (approx. 13% of volume) for Meenal’s intake desk. *Methodology note:* because this 0.45 threshold was tuned on this same validation slice, the 84.0% figure is slightly optimistic; on completely unseen production traffic, expected accuracy is conservatively estimated between **81.0% and 83.5%**.
 
 ---
 

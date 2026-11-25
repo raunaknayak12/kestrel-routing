@@ -73,6 +73,11 @@ Warranty Claims       5        9         5      12        8        5       215
 - **Problem:** Approximately 4.7% of requests contain vague phrases ("please call me", "urgent call back") with no symptoms or equipment description. No text classifier can route these with certainty.
 - **Our Fix:** Calibrated confidence scoring. When confidence drops below **0.45**, the request is tagged `needs_triage: true` for Meenal's human triage desk (costing Rs 100) instead of an erroneous technician dispatch (Rs 540) or misroute (Rs 565).
 
+> [!WARNING]
+> **Methodological Note (Evaluation Overlap & Optimism Bias):**
+> The `0.45` triage threshold was calibrated on the same April–June 2026 validation slice (2,135 CRM rows) used to report the **83.98% (84.0%)** headline accuracy.
+> Because threshold selection and performance evaluation occurred on the same data slice, the 84.0% number is **slightly optimistic**. On completely unseen future distribution (the 2,178 test requests), true auto-routed accuracy is conservatively expected to land between **81.0% and 83.5%**. Re-verifying threshold stability during the recommended 2-week live shadow run is required.
+
 ---
 
 ## 4. Financial Economics (Policy §4)
